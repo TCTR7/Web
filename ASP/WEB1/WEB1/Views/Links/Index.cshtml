@@ -1,0 +1,74 @@
+﻿@model IEnumerable<WEB1.Models.Link>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm())
+{
+    <p>
+        Tìm theo tên Link: @Html.TextBox("searchString")  --- Tìm theo Category: @Html.DropDownList("CategoryID", "") <input type="submit" value="tìm liếm" />
+    </p>
+}
+<table class="table">
+    @*<tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LinkID)
+        </th>
+        <th>
+            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.NameSortParm });
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LinkURL)
+        </th>
+        <th>
+            @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm });
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </th>
+        <th></th>
+    </tr>*@
+    <tr>
+        @Html.Raw(ViewBag.Headings)
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                @Html.DisplayFor(modelItem => item.LinkID)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkURL)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.LinkDescription)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.LinkID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.LinkID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.LinkID })
+            </td>
+        </tr>
+    }
+
+</table>
