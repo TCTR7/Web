@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using WEB1.Models;
 using System.Linq.Dynamic;
+using System.Reflection;
 
 namespace WEB1.Controllers
 {
@@ -15,11 +16,21 @@ namespace WEB1.Controllers
     {
         private WEB1Entities1 db = new WEB1Entities1();
 
+        public class ButtonClickAttribute : ActionNameSelectorAttribute
+        {
+            public override bool IsValidName(ControllerContext controllerContext, string actionName, MethodInfo methodInfo)
+            {
+                if (actionName.Equals(methodInfo.Name, StringComparison.InvariantCultureIgnoreCase)) return true;
+                var request = controllerContext.HttpContext.Request;
+                return request[methodInfo.Name] != null;
+            }
+        }
+
         // GET: Links
         public ActionResult Index(string searchString, string sortOrder, string sortProperty, int categoryID = 0)
         {
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "desc" : "";
-            if (sortOrder ==("asc")) ViewBag.NameSortParm = "desc";
+            ViewBag.SearchValue = searchString;
+            if (sortOrder == ("asc")) ViewBag.NameSortParm = "desc";
             if (sortOrder == ("desc")) ViewBag.NameSortParm = "";
             if (sortOrder == ("")) ViewBag.NameSortParm = "asc";
             var categories = from c in db.Categories select c;
@@ -27,61 +38,13 @@ namespace WEB1.Controllers
 
             var links = from l in db.Links
                         join c in db.Categories on l.CategoryID equals c.CategoryID
-                        select new { l.LinkID, l.LinkName, l.LinkURL, l.LinkDescription, l.CategoryID, c.CategoryName};
-            var properties = typeof(Link).GetProperties();
+                        select new { l.LinkID, l.LinkName, l.LinkURL, l.LinkDescription, l.CategoryID, c.CategoryName };
 
-            List<Tuple<string, bool, int>> listTupple = new List<Tuple<string, bool, int>>();
-            foreach (var item in properties)
-            {
-                int order = 0;
-                bool isVirtual = item.GetAccessors()[0].IsVirtual;
-                if (item.Name.Equals("LinkID")) order = 1;
-                if (item.Name.Equals("LinkName")) order = 2;
-                if (item.Name.Equals("CategoryID")) order = 3;
-                if (item.Name.Equals("LinkURL")) order = 4;
-                if (item.Name.Equals("LinkDescription")) order = 5;
-                if (item.Name.Equals("CategoryName")) continue;
-                Tuple<string, bool, int> tuple = new Tuple<string, bool, int>( item.Name, isVirtual, order);
-                listTupple.Add(tuple);
-            }
-
-            listTupple = listTupple.OrderBy(x => x.Item3).ToList();
-
-            foreach (var item in listTupple)
-            {
-                if (item.Item1 == "LinkDescription")
-                {
-                    continue;
-                }
-                if (!item.Item2)
-                {
-                    if (sortOrder == "desc" && sortProperty == item.Item1)
-                    {
-                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort-desc'/></a></th>";
-                    }
-                    else if (sortOrder == "asc" && sortProperty == item.Item1)
-                    {
-                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort-desc'/></a></th>";
-                    }
-                    else
-                    {
-                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort'/></a></th>";
-                    }
-                }
-                else
-                {
-                    ViewBag.Headings += "<th>" + item.Item1 + "</th>";
-                }
-            }
+            OrderData(sortOrder, sortProperty);
 
             if (String.IsNullOrEmpty(sortProperty))
             {
                 sortProperty = "LinkID";
-            }
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                links = links.Where(x => x.LinkName.Contains(searchString));
             }
 
             if (categoryID != 0)
@@ -92,6 +55,15 @@ namespace WEB1.Controllers
             if (sortOrder == "desc")
             {
                 links = links.OrderBy(sortProperty + " desc");
+            }
+            else if (sortOrder == "asc")
+            {
+                links = links.OrderBy(sortProperty);
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                links = links.Where(x => x.LinkName.Contains(searchString));
             }
 
             List<Link> listLink = new List<Link>();
@@ -112,6 +84,57 @@ namespace WEB1.Controllers
             return View(listLink);
         }
 
+        private void OrderData(string sortOrder, string sortProperty)
+        {
+            var properties = typeof(Link).GetProperties();
+
+            List<Tuple<string, bool, int>> listTupple = new List<Tuple<string, bool, int>>();
+            foreach (var item in properties)
+            {
+                int order = 0;
+                bool isVirtual = item.GetAccessors()[0].IsVirtual;
+                if (item.Name.Equals("LinkID")) order = 1;
+                if (item.Name.Equals("LinkName")) order = 2;
+                if (item.Name.Equals("CategoryID")) order = 3;
+                if (item.Name.Equals("LinkURL")) order = 4;
+                if (item.Name.Equals("LinkDescription")) order = 5;
+                if (item.Name.Equals("CategoryName")) continue;
+                Tuple<string, bool, int> tuple = new Tuple<string, bool, int>(item.Name, isVirtual, order);
+                listTupple.Add(tuple);
+            }
+
+            listTupple = listTupple.OrderBy(x => x.Item3).ToList();
+
+            foreach (var item in listTupple)
+            {
+                if (!item.Item2)
+                {
+                    if (sortOrder == "desc" && sortProperty == item.Item1)
+                    {
+                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "&searchString=" + ViewBag.SearchValue + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort-desc'/></a></th>";
+                    }
+                    else if (sortOrder == "asc" && sortProperty == item.Item1)
+                    {
+                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "&searchString=" + ViewBag.SearchValue + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort-asc'/></a></th>";
+                    }
+                    else
+                    {
+                        ViewBag.Headings += "<th><a href='?sortProperty=" + item.Item1 + "&sortOrder=" + ViewBag.NameSortParm + "&searchString=" + ViewBag.SearchValue + "'>" + item.Item1 + "<i class='fa fa-fw fa-sort'/></a></th>";
+                    }
+                }
+                else
+                {
+                    ViewBag.Headings += "<th>" + item.Item1 + "</th>";
+                }
+            }
+        }
+        [HttpPost, ButtonClick]
+        public ActionResult Reset()
+        {
+            ViewBag.SearchValue = "";
+            Index("", "", "");
+            return View();
+        }
         // GET: Links/Details/5
         public ActionResult Details(int? id)
         {
@@ -216,4 +239,6 @@ namespace WEB1.Controllers
             base.Dispose(disposing);
         }
     }
+
+    
 }

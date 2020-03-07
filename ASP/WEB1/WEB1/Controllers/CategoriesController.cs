@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WEB1.Models;
+using PagedList;
 
 namespace WEB1.Controllers
 {
@@ -15,9 +16,32 @@ namespace WEB1.Controllers
         private WEB1Entities1 db = new WEB1Entities1();
 
         // GET: Categories
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Index(int? size, int? page)
         {
-            return View(db.Categories.ToList());
+            List<SelectListItem> items = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "5", Value = "5"},
+                new SelectListItem{Text = "10", Value = "10"},
+                new SelectListItem{Text = "20", Value = "20"},
+                new SelectListItem{Text = "50", Value = "50"},
+                new SelectListItem{Text = "100", Value = "100"},
+                new SelectListItem{Text = "200", Value = "200"},
+            };
+
+            foreach (var item in items)
+            {
+                if (item.Value == size.ToString()) item.Selected = true;
+            }
+
+            ViewBag.Size = items;
+            ViewBag.CurrentSize = size;
+
+            page = page ?? 1;
+            var categories = (from c in db.Categories select c).OrderBy(x =>x.CategoryID);
+            int pageSize = size ?? 5;
+            int pageNumber = page ?? 1;
+            return View(categories.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Categories/Details/5

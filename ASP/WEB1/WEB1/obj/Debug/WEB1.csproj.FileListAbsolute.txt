@@ -155,3 +155,7 @@ D:\Developer\Web\ASP\WEB1\WEB1\obj\Debug\WEB1.csproj.CopyComplete
 D:\Developer\Web\ASP\WEB1\WEB1\obj\Debug\WEB1.dll
 D:\Developer\Web\ASP\WEB1\WEB1\obj\Debug\WEB1.pdb
 D:\Developer\Web\ASP\WEB1\WEB1\bin\System.Linq.Dynamic.dll
+D:\Developer\Web\ASP\WEB1\WEB1\bin\PagedList.dll
+D:\Developer\Web\ASP\WEB1\WEB1\bin\PagedList.Mvc.dll
+D:\Developer\Web\ASP\WEB1\WEB1\bin\PagedList.xml
+D:\Developer\Web\ASP\WEB1\WEB1\bin\PagedList.Mvc.xml

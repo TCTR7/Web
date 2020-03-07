@@ -13,7 +13,7 @@
 @using (Html.BeginForm())
 {
     <p>
-        Tìm theo tên Link: @Html.TextBox("searchString")  --- Tìm theo Category: @Html.DropDownList("CategoryID", "") <input type="submit" value="tìm liếm" />
+        Tìm theo tên Link: @Html.TextBox("searchString", (string) ViewBag.SearchValue)  --- Tìm theo Category: @Html.DropDownList("CategoryID", "") <input type="submit" value="tìm kiếm" />  <input type="submit" name="Reset" value="Mặc định" />
     </p>
 }
 <table class="table">
@@ -52,16 +52,13 @@
                 @Html.DisplayFor(modelItem => item.LinkName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LinkURL)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.LinkDescription)
-            </td>*@
-            <td>
                 @Html.DisplayFor(modelItem => item.CategoryID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
+                @Html.DisplayFor(modelItem => item.LinkURL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkDescription)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.LinkID }) |
