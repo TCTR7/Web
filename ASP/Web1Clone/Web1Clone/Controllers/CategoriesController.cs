@@ -6,80 +6,48 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using WEB1.Models;
+using Web1Clone.Models;
 using PagedList;
-using System.Linq.Dynamic;
 
-namespace WEB1.Controllers
+namespace Web1Clone.Controllers
 {
     public class CategoriesController : Controller
     {
-        private WEB1Entities1 db = new WEB1Entities1();
+        private WEB1Entities db = new WEB1Entities();
 
         // GET: Categories
-        [HttpGet]
-        public ActionResult Index(int? size, int? page, string searchString, string sortProperty, string sortOrder)
+        public ActionResult Index(string searchString, int? pageSize, int? page)
         {
-
-            int pageSize = size ?? 5;
+            pageSize = pageSize ?? 5;
             int pageNumber = page ?? 1;
 
-            ViewBag.SearchValue = searchString;
-            ViewBag.Page = page;
-            ViewBag.SortProperty = sortProperty;
-            ViewBag.SortOrder = sortOrder;
-
-            List<SelectListItem> items = CreateDropdownPageSize(size);
-            ViewBag.Size = items;
-            ViewBag.CurrentSize = size;
-
-            var properties = typeof(Category).GetProperties();
-
-            foreach (var item in properties)
-            {
-                bool isVirtual = item.GetAccessors()[0].IsVirtual;
-                if (!isVirtual)
-                {
-                    ViewBag.Heading += "<th><a href='?size=" + size + "&page=" + page + "&searchString=" + searchString + "&sortOrder=" + sortOrder + "&sortProperty=" + sortProperty + "'>" + item.Name + "</a></th>";
-                }
-                else
-                {
-                    ViewBag.Headings += "<th>" + item.Name + "</th>";
-                }
-            }
-
-            var categories = from c in db.Categories select c;
-
-            if (sortOrder == "desc") categories = categories.OrderBy(sortProperty + " desc");
-            else if (sortOrder == "asc") categories = categories.OrderBy(sortProperty + " asc");
-            else categories = categories.OrderBy(x => x.CategoryID);
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                categories = categories.Where(x => x.CategoryName.Contains(searchString));
-            }
-
-            return View(categories.ToPagedList(pageNumber, pageSize));
-        }
-
-        private List<SelectListItem> CreateDropdownPageSize(int? size)
-        {
             List<SelectListItem> items = new List<SelectListItem>()
             {
-                new SelectListItem{Text = "5", Value = "5"},
-                new SelectListItem{Text = "10", Value = "10"},
-                new SelectListItem{Text = "20", Value = "20"},
-                new SelectListItem{Text = "50", Value = "50"},
-                new SelectListItem{Text = "100", Value = "100"},
-                new SelectListItem{Text = "200", Value = "200"},
+                new SelectListItem(){Text = "5", Value = "5"},
+                new SelectListItem(){Text = "10", Value = "10"},
+                new SelectListItem(){Text = "50", Value = "50"},
+                new SelectListItem(){Text = "100", Value = "100"},
             };
 
             foreach (var item in items)
             {
-                if (item.Value == size.ToString()) item.Selected = true;
+                if (item.Value == pageSize.ToString())
+                {
+                    item.Selected = true;
+                }
             }
 
-            return items;
+            ViewBag.DropDownPageSize = items;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.SearchValue = searchString;
+
+            var categories = from c in db.Categories select c;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                categories = categories.Where(x => x.CategoryName.Contains(searchString));
+            }
+            return View(categories.OrderBy(x => x.CategoryID).ToPagedList(pageNumber, (int)pageSize));
         }
 
         // GET: Categories/Details/5

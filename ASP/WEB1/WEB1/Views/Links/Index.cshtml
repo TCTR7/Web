@@ -17,27 +17,6 @@
     </p>
 }
 <table class="table">
-    @*<tr>
-        <th>
-            @Html.DisplayNameFor(model => model.LinkID)
-        </th>
-        <th>
-            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.NameSortParm });
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LinkURL)
-        </th>
-        <th>
-            @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm });
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CategoryID)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CategoryName)
-        </th>
-        <th></th>
-    </tr>*@
     <tr>
         @Html.Raw(ViewBag.Headings)
     </tr>

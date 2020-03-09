@@ -1,0 +1,76 @@
+﻿@model PagedList.IPagedList<Web1Clone.Models.Link>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm())
+{
+    <p>
+        @Html.TextBox("searchString") <input type="submit" value="Search" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            LinkName
+        </th>
+        <th>
+            LinkURL
+        </th>
+        <th>
+            LinkDescription
+        </th>
+        <th>
+            CategoryID
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkURL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryID)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.LinkID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.LinkID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.LinkID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+<div class="row">
+    <div class="col-md-6 col-lg-6 col-xs-6 col-sm-6">
+        @using (Html.BeginForm())
+        {
+            <p>
+                Size Page: @Html.DropDownList("sizePage", (List<SelectListItem>)ViewBag.DropDownSizePage, new { @onchange = "this.form.submit();" })
+            </p>
+        }
+    </div>
+    <div>
+        Page: @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+    </div>
+</div>
