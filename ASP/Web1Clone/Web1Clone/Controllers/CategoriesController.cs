@@ -8,12 +8,27 @@ using System.Web;
 using System.Web.Mvc;
 using Web1Clone.Models;
 using PagedList;
+using System.Reflection;
 
 namespace Web1Clone.Controllers
 {
     public class CategoriesController : Controller
     {
         private WEB1Entities db = new WEB1Entities();
+
+        public class HttpActionAttribute : ActionNameSelectorAttribute
+        {
+            public override bool IsValidName(ControllerContext controllerContext, string actionName, MethodInfo methodInfo)
+            {
+                if (actionName.Equals(methodInfo.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+                var request = controllerContext.HttpContext.Request;
+                bool re = request[methodInfo.Name] != null;
+                return re;
+            }
+        }
 
         // GET: Categories
         public ActionResult Index(string searchString, int? pageSize, int? page)
@@ -48,6 +63,14 @@ namespace Web1Clone.Controllers
                 categories = categories.Where(x => x.CategoryName.Contains(searchString));
             }
             return View(categories.OrderBy(x => x.CategoryID).ToPagedList(pageNumber, (int)pageSize));
+        }
+
+        [HttpPost, HttpAction]
+        public ActionResult Reset()
+        {
+            ViewBag.SearchValue = "";
+            Index("", null, null);
+            return View();
         }
 
         // GET: Categories/Details/5

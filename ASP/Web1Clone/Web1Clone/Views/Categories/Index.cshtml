@@ -11,10 +11,10 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@using (Html.BeginForm("Index", "Categories", FormMethod.Get))
+@using (Html.BeginForm())
 {
     <p>
-        @Html.TextBox("searchString", (string)ViewBag.SearchValue) <input type="submit" value="Search"/>
+        @Html.TextBox("searchString", (string)ViewBag.SearchValue) <input type="submit" value="Search"/>  <input type="submit" name="Reset" value="Refesh" />
         @Html.Hidden("page", (object)ViewBag.CurrentPage)
         @Html.Hidden("pageSize", (object)ViewBag.PageSize)
     </p>
@@ -31,6 +31,9 @@
 
 @foreach (var item in Model) {
     <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CategoryID)
+        </td>
         <td>
             @Html.DisplayFor(modelItem => item.CategoryName)
         </td>
@@ -52,6 +55,9 @@
             <p>
                 Page Size: @Html.DropDownList("pageSize", (List<SelectListItem>)ViewBag.DropDownPageSize, new { @onchange = "this.form.submit();"})
             </p> 
+            @Html.Hidden("searchString", (object)ViewBag.SearchValue)
+            @Html.Hidden("pageSize", (object)ViewBag.PageSize)
+            @Html.Hidden("page", (object)ViewBag.CurrentPage)
         }
     </div>
     <div class="col-md-6 col-lg-6 col-xs-6 col-sm-6 text-right">
