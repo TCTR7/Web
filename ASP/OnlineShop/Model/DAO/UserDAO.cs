@@ -9,12 +9,14 @@ namespace Model.DAO
 {
     public class UserDAO
     {
-        private static UserDAO _intance;
-        public static UserDAO Instance
+        public enum LoginState
         {
-            get { if (_intance == null) _intance = new UserDAO(); return _intance; }
+            WRONG_PASSWORD = -2,
+            ACCOUNT_IS_LOCKED,
+            DOES_NOT_EXITST_ACCOUNT,
+            SUSSCES
         }
-            
+
         private OnlineShopDBContext db = null;
         public UserDAO()
         {
@@ -27,10 +29,30 @@ namespace Model.DAO
             return user.ID;
         }
 
-        public bool Login(string userName, string password)
+        public LoginState Login(string userName, string password)
         {
-            var result = db.Users.Count(x => x.UserName == userName && x.Password == password);
-            return result > 0;
+            var result = db.Users.SingleOrDefault(x => x.UserName == userName);
+            if (result == null)
+            {
+                return LoginState.DOES_NOT_EXITST_ACCOUNT;
+            }
+            else
+            {
+                if (result.Status == false)
+                {
+                    return LoginState.ACCOUNT_IS_LOCKED;
+                }
+                else if (result.Password != password)
+                {
+                    return LoginState.WRONG_PASSWORD;
+                }
+            }
+            return LoginState.SUSSCES;
+        }
+
+        public User GetUserByName(string userName)
+        {
+            return db.Users.SingleOrDefault(x => x.UserName == userName);
         }
     }
 }
