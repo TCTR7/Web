@@ -60,5 +60,50 @@ namespace Model.DAO
         {
             return db.Users.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize); 
         }
+
+        public bool UpdateUser(User entity)
+        {
+            try
+            {
+                var user = db.Users.Find(entity.ID);
+                user.Name = entity.Name;
+                user.Password = entity.Password;
+                user.Phone = entity.Phone;
+                user.Email = entity.Email;
+                user.ModifiedDate = entity.ModifiedDate;
+                user.ModifiedBy = entity.ModifiedBy;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public User GetUserById(int id)
+        {
+            return db.Users.Find(id);
+        }
+
+        public bool IsExitstUser(User entity)
+        {
+            return db.Users.Contains(entity);
+        }
+
+        public bool DeleteUserById(int id)
+        {
+            try
+            {
+                var user = db.Users.Find(id);
+                db.Users.Remove(user);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

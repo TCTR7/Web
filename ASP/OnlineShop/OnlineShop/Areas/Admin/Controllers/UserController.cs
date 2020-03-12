@@ -11,9 +11,13 @@ namespace OnlineShop.Areas.Admin.Controllers
     public class UserController : Controller
     {
         // GET: Admin/User
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        private int _currentPage;
+        private int _pageSize;
+        public ActionResult Index(int page = 1, int pageSize = 5)
         {
             UserDAO dao = new UserDAO();
+            ViewBag.PageSize = _pageSize = pageSize;
+            ViewBag.CurrentPage = _currentPage = page;
             var model = dao.GetAllUser(page, pageSize);
             return View(model);
         }
@@ -35,7 +39,7 @@ namespace OnlineShop.Areas.Admin.Controllers
                 if (result > 0)
                 {
                     
-                    return RedirectToAction("Index", "User");
+                    return RedirectToAction("Create", "User");
                 }
                 else
                 {
@@ -47,6 +51,49 @@ namespace OnlineShop.Areas.Admin.Controllers
                 ModelState.AddModelError("", "error");
             }
             return View("Index");
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            var dao = new UserDAO();
+            var user = dao.GetUserById(id);
+            return View(user);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                UserDAO userDAO = new UserDAO();
+                if (!String.IsNullOrEmpty(user.Password))
+                {
+                    user.Password = Common.Encryptor.MD5Hash(user.Password);
+                }
+                var result = userDAO.UpdateUser(user);
+                if (result)
+                {
+                    ModelState.AddModelError("", "Edit thành công");
+                    return RedirectToAction("Index", "User");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Edit không thành công");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "error");
+            }
+            return View("Index");
+        }
+
+        [HttpDelete]
+        public ActionResult Delete(int id)
+        {
+            var result = new UserDAO().DeleteUserById(id);
+            return RedirectToAction("Index");
         }
     }
 }
