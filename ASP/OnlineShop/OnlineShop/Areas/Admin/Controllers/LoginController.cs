@@ -43,7 +43,7 @@ namespace OnlineShop.Areas.Admin.Controllers
                             UserName = user.Name
                         };
                         Session.Add(Common.CommonConstants.USER_LOGIN_SESSION, currentUserLogin);
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "HomeAdmin");
                     default:
                         ModelState.AddModelError("", "Đăng nhập thất bại");
                         break;

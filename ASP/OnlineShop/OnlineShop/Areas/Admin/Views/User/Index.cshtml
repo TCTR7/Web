@@ -1,0 +1,54 @@
+﻿@model PagedList.IPagedList<Model.EF.User>
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Quản lý người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section header
+{
+    Quản lý người dùng
+}
+<div class="row">
+    <div>
+        <div class="card mb-10">
+            <div class="card-header"><i class="fas fa-table mr-1"></i>Danh sách người dùng</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>UserName</th>
+                                <th>DisplayName</th>
+                                <th>Address</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>CreatedDate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.UserName</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.Phone</td>
+                                    <td>@item.CreatedDate</td>
+                                    <td>
+                                        <a href="/User/Edit/@item.ID">Sửa</a>
+                                        <a href="/User/Delete/@item.ID">Xóa</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @Html.PagedListPager(Model, page => Url.Action("Index", page))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

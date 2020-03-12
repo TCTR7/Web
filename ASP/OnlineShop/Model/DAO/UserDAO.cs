@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Model.EF;
+using PagedList;
 
 namespace Model.DAO
 {
@@ -53,6 +54,11 @@ namespace Model.DAO
         public User GetUserByName(string userName)
         {
             return db.Users.SingleOrDefault(x => x.UserName == userName);
+        }
+
+        public IEnumerable<User> GetAllUser(int page, int pageSize)
+        {
+            return db.Users.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize); 
         }
     }
 }
