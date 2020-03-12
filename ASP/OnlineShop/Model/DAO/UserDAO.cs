@@ -56,8 +56,13 @@ namespace Model.DAO
             return db.Users.SingleOrDefault(x => x.UserName == userName);
         }
 
-        public IEnumerable<User> GetAllUser(int page, int pageSize)
+        public IEnumerable<User> GetAllUser(string searchString, int page, int pageSize)
         {
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                return db.Users.Where(x => x.UserName.Contains(searchString) || x.Name.Contains(searchString))
+                    .OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+            }
             return db.Users.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize); 
         }
 

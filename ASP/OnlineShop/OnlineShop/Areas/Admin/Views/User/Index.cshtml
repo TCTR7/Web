@@ -13,6 +13,18 @@
 <div class="card md-10">
     <div class="card-header"><i class="fas fa-table mr-1"></i>Danh sách người dùng</div>
     <div class="card-body">
+        @using (Html.BeginForm("Index", "User", FormMethod.Get))
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" value="@ViewBag.SearchValue" name="searchString" />
+                </div>
+                <div class="col-md-4">
+                    <button type="submit">Tìm kiếm</button>
+                </div>
+            </div>
+            <br/>
+        }
         <div class="table-responsive">
             <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                 <thead>
@@ -48,4 +60,4 @@
         </div>
     </div>
 </div>
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page = page, pageSize = ViewBag.PageSize}))
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page = page, @pageSize = @ViewBag.PageSize, @searchString = @ViewBag.SearchValue }))

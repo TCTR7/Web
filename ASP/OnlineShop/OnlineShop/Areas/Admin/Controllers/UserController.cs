@@ -13,12 +13,13 @@ namespace OnlineShop.Areas.Admin.Controllers
         // GET: Admin/User
         private int _currentPage;
         private int _pageSize;
-        public ActionResult Index(int page = 1, int pageSize = 5)
+        public ActionResult Index(string searchString, int page = 1, int pageSize = 5)
         {
             UserDAO dao = new UserDAO();
             ViewBag.PageSize = _pageSize = pageSize;
             ViewBag.CurrentPage = _currentPage = page;
-            var model = dao.GetAllUser(page, pageSize);
+            ViewBag.SearchValue = searchString;
+            var model = dao.GetAllUser(searchString, page, pageSize);
             return View(model);
         }
 
