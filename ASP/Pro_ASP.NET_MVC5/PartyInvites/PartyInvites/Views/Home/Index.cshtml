@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>TCT</title>
+</head>
+<body>
+    <div>
+        @ViewBag.Greeting World (from the view)
+        <p>
+            We're going to have an exciting party. <br/>
+            (To do : sell it better. Add pitures or something.)
+        </p>
+        @Html.ActionLink("RSVP Now", "RSVPForm")
+    </div>
+</body>
+</html>

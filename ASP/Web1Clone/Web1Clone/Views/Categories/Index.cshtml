@@ -1,5 +1,5 @@
 ﻿@model PagedList.IPagedList<Web1Clone.Models.Category>
-    @using PagedList.Mvc
+@using PagedList.Mvc
 
 @{
     ViewBag.Title = "Index";
@@ -14,7 +14,7 @@
 @using (Html.BeginForm())
 {
     <p>
-        @Html.TextBox("searchString", (string)ViewBag.SearchValue) <input type="submit" value="Search"/>  <input type="submit" name="Reset" value="Refesh" />
+        @Html.TextBox("searchString", (string)ViewBag.SearchValue) <input type="submit" value="Search" />  <input type="submit" name="Reset" value="Refesh" />
         @Html.Hidden("page", (object)ViewBag.CurrentPage)
         @Html.Hidden("pageSize", (object)ViewBag.PageSize)
     </p>
@@ -29,21 +29,22 @@
         </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CategoryID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CategoryID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CategoryID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CategoryID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CategoryID })
+            </td>
+        </tr>
+    }
 
 </table>
 
@@ -53,8 +54,8 @@
         @using (Html.BeginForm())
         {
             <p>
-                Page Size: @Html.DropDownList("pageSize", (List<SelectListItem>)ViewBag.DropDownPageSize, new { @onchange = "this.form.submit();"})
-            </p> 
+                Page Size: @Html.DropDownList("pageSize", (List<SelectListItem>)ViewBag.DropDownPageSize, new { @onchange = "this.form.submit();" })
+            </p>
             @Html.Hidden("searchString", (object)ViewBag.SearchValue)
             @Html.Hidden("pageSize", (object)ViewBag.PageSize)
             @Html.Hidden("page", (object)ViewBag.CurrentPage)
