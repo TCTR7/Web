@@ -5,17 +5,32 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
     <title>TCT</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+    <style>
+        .btn a {
+            color: white;
+            text-decoration: none
+        }
+
+        body {
+            background-color: #F1F1F1
+        }
+    </style>
 </head>
 <body>
-    <div>
+    <div class="text-center">
         @ViewBag.Greeting World (from the view)
         <p>
-            We're going to have an exciting party. <br/>
+            <h2>We're going to have an exciting party. </h2><br/>
+            <h3>And you are invited</h3>
             (To do : sell it better. Add pitures or something.)
         </p>
-        @Html.ActionLink("RSVP Now", "RSVPForm")
+        <div class="btn btn-success">
+            @Html.ActionLink("RSVP Now", "RSVPForm")
+        </div>
     </div>
 </body>
 </html>
